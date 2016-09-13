@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.challenge.android.radio_t.network.RssFetcher;
+import com.challenge.android.radio_t.parser.RssParser;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
@@ -20,6 +21,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onRssFetched(@Nullable String rssData) {
                 Log.d(TAG, "onRssFetched() called with: " + "rssData = [" + rssData + "]");
+                RssParser parser = new RssParser();
+                if (rssData != null) parser.parse(rssData);
             }
 
             @Override

@@ -14,14 +14,14 @@ public class PodcastItem {
     @Nullable
     private final String author;
     @Nullable
-    private final Media media;
+    private final Content media;
     @Nullable
     private final String subtitle;
     @Nullable
     private final String keywords;
 
     public PodcastItem(@Nullable String title, @Nullable String link, @Nullable String pubDate,
-                       @Nullable String description, @Nullable String author, @Nullable Media media,
+                       @Nullable String description, @Nullable String author, @Nullable Content media,
                        @Nullable String subtitle, @Nullable String keywords) {
         this.title = title;
         this.link = link;
@@ -59,7 +59,7 @@ public class PodcastItem {
     }
 
     @Nullable
-    public Media getMedia() {
+    public Content getMedia() {
         return media;
     }
 

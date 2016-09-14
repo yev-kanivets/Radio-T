@@ -31,7 +31,7 @@ public class RssParser {
         public void onFinish() {
             Channel channel = elementFinder.getResult();
             if (onRssParsedListener != null) {
-                if (channel == null) onRssParsedListener.onFailed();
+                if (channel == null) onRssParsedListener.onFailed(null);
                 else onRssParsedListener.onRssParsed(channel);
             }
         }
@@ -52,6 +52,6 @@ public class RssParser {
     public interface OnRssParsedListener {
         void onRssParsed(@NonNull Channel channel);
 
-        void onFailed();
+        void onFailed(@Nullable String reason);
     }
 }

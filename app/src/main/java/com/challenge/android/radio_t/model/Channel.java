@@ -1,12 +1,14 @@
 package com.challenge.android.radio_t.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Channel {
+public class Channel implements Parcelable {
     @Nullable
     private final String title;
     @Nullable
@@ -27,6 +29,26 @@ public class Channel {
         this.podcastItemList = new ArrayList<>();
         if (podcastItemList != null) this.podcastItemList.addAll(podcastItemList);
     }
+
+    protected Channel(Parcel in) {
+        title = in.readString();
+        link = in.readString();
+        thumbnail = in.readString();
+        keywords = in.readString();
+        podcastItemList = in.createTypedArrayList(PodcastItem.CREATOR);
+    }
+
+    public static final Creator<Channel> CREATOR = new Creator<Channel>() {
+        @Override
+        public Channel createFromParcel(Parcel in) {
+            return new Channel(in);
+        }
+
+        @Override
+        public Channel[] newArray(int size) {
+            return new Channel[size];
+        }
+    };
 
     @Nullable
     public String getTitle() {
@@ -51,5 +73,19 @@ public class Channel {
     @NonNull
     public List<PodcastItem> getPodcastItemList() {
         return podcastItemList;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(title);
+        dest.writeString(link);
+        dest.writeString(thumbnail);
+        dest.writeString(keywords);
+        dest.writeTypedList(podcastItemList);
     }
 }

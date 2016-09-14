@@ -1,8 +1,10 @@
 package com.challenge.android.radio_t.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 
-public class PodcastItem {
+public class PodcastItem implements Parcelable {
     @Nullable
     private final String title;
     @Nullable
@@ -32,6 +34,29 @@ public class PodcastItem {
         this.subtitle = subtitle;
         this.keywords = keywords;
     }
+
+    protected PodcastItem(Parcel in) {
+        title = in.readString();
+        link = in.readString();
+        pubDate = in.readString();
+        description = in.readString();
+        author = in.readString();
+        media = in.readParcelable(Content.class.getClassLoader());
+        subtitle = in.readString();
+        keywords = in.readString();
+    }
+
+    public static final Creator<PodcastItem> CREATOR = new Creator<PodcastItem>() {
+        @Override
+        public PodcastItem createFromParcel(Parcel in) {
+            return new PodcastItem(in);
+        }
+
+        @Override
+        public PodcastItem[] newArray(int size) {
+            return new PodcastItem[size];
+        }
+    };
 
     @Nullable
     public String getTitle() {
@@ -71,5 +96,22 @@ public class PodcastItem {
     @Nullable
     public String getKeywords() {
         return keywords;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(title);
+        dest.writeString(link);
+        dest.writeString(pubDate);
+        dest.writeString(description);
+        dest.writeString(author);
+        dest.writeParcelable(media, flags);
+        dest.writeString(subtitle);
+        dest.writeString(keywords);
     }
 }

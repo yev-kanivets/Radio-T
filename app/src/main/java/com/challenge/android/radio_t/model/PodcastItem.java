@@ -2,7 +2,11 @@ package com.challenge.android.radio_t.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class PodcastItem implements Parcelable {
     @Nullable
@@ -21,6 +25,8 @@ public class PodcastItem implements Parcelable {
     private final String subtitle;
     @Nullable
     private final String keywords;
+    @Nullable
+    private String thumbnailUrl;
 
     public PodcastItem(@Nullable String title, @Nullable String link, @Nullable String pubDate,
                        @Nullable String description, @Nullable String author, @Nullable Content media,
@@ -96,6 +102,23 @@ public class PodcastItem implements Parcelable {
     @Nullable
     public String getKeywords() {
         return keywords;
+    }
+
+    @NonNull
+    public String getThumbnailUrl() {
+        if (thumbnailUrl == null) {
+            thumbnailUrl = getThumbnailUrlFromHtml(description);
+        }
+        return thumbnailUrl;
+    }
+
+    @NonNull
+    private String getThumbnailUrlFromHtml(String html) {
+        if (description == null) return "";
+        Pattern pattern = Pattern.compile("http.*((jpg)|(png))");
+        Matcher matcher = pattern.matcher(html);
+        if (matcher.find()) return matcher.group(0);
+        else return "";
     }
 
     @Override

@@ -1,6 +1,5 @@
 package com.challenge.android.radio_t.adapter;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
@@ -37,7 +36,9 @@ public class PodcastItemAdapter extends RecyclerView.Adapter<PodcastItemAdapter.
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         PodcastItem podcastItem = podcastList.get(position);
-        Picasso.with(holder.itemView.getContext()).load(podcastItem.getLink());
+        Picasso.with(holder.itemView.getContext())
+                .load(podcastItem.getThumbnailUrl())
+                .into(holder.ivThumbnail);
         holder.tvTitle.setText(trim(podcastItem.getTitle()));
         holder.tvSubtitle.setText(trim(podcastItem.getSubtitle()));
     }

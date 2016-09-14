@@ -67,10 +67,10 @@ public class PodcastChannelParser implements Parser<Channel> {
 
         @Override
         public void end() {
-            channelHolder.title = titleFinder.getResultOrThrow();
-            channelHolder.link = linkFinder.getResultOrThrow();
-            channelHolder.thumbnail = thumbnailFinder.getResultOrThrow();
-            channelHolder.keywords = keywordsFinder.getResultOrThrow();
+            channelHolder.title = titleFinder.getResult();
+            channelHolder.link = linkFinder.getResult();
+            channelHolder.thumbnail = thumbnailFinder.getResult();
+            channelHolder.keywords = keywordsFinder.getResult();
 
             listener.onParsed(channelHolder.asChannel());
         }

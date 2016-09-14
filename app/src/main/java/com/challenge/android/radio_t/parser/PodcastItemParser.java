@@ -73,14 +73,14 @@ public class PodcastItemParser implements Parser<PodcastItem> {
 
         @Override
         public void end() {
-            itemHolder.title = titleFinder.getResultOrThrow();
-            itemHolder.link = linkFinder.getResultOrThrow();
-            itemHolder.pubDate = pubDateFinder.getResultOrThrow();
-            itemHolder.description = descriptionFinder.getResultOrThrow();
-            itemHolder.author = authorFinder.getResultOrThrow();
-            itemHolder.content = contentFinder.getResultOrThrow();
-            itemHolder.subtitle = subtitleFinder.getResultOrThrow();
-            itemHolder.keywords = keywordsFinder.getResultOrThrow();
+            itemHolder.title = titleFinder.getResult();
+            itemHolder.link = linkFinder.getResult();
+            itemHolder.pubDate = pubDateFinder.getResult();
+            itemHolder.description = descriptionFinder.getResult();
+            itemHolder.author = authorFinder.getResult();
+            itemHolder.content = contentFinder.getResult();
+            itemHolder.subtitle = subtitleFinder.getResult();
+            itemHolder.keywords = keywordsFinder.getResult();
 
             listener.onParsed(itemHolder.asItem());
         }

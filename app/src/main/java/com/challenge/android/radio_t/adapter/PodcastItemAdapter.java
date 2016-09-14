@@ -39,7 +39,7 @@ public class PodcastItemAdapter extends RecyclerView.Adapter<PodcastItemAdapter.
     public void onBindViewHolder(ViewHolder holder, int position) {
         final PodcastItem podcastItem = podcastList.get(position);
         Picasso.with(holder.itemView.getContext())
-                .load(podcastItem.getThumbnailUrl())
+                .load(podcastItem.getImageUrl())
                 .into(holder.ivThumbnail);
         holder.tvTitle.setText(trim(podcastItem.getTitle()));
         holder.tvSubtitle.setText(trim(podcastItem.getSubtitle()));

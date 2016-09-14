@@ -3,6 +3,8 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="normal_margin">16dp</dimen>
+    <dimen name="half_margin">8dp</dimen>
 
     <dimen name="thumbnail_size">48dp</dimen>
+    <dimen name="player_button_height">48dp</dimen>
 </resources>

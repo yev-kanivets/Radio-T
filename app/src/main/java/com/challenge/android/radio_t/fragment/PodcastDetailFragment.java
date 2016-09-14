@@ -4,14 +4,19 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.challenge.android.radio_t.R;
 import com.challenge.android.radio_t.model.PodcastItem;
+import com.squareup.picasso.Picasso;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
 
 /**
@@ -28,6 +33,11 @@ public class PodcastDetailFragment extends Fragment {
     private PodcastItem podcastItem;
 
     private OnFragmentInteractionListener mListener;
+
+    @Bind(R.id.iv_cover)
+    public ImageView ivCover;
+    @Bind(R.id.tv_subtitle)
+    public TextView tvSubtitle;
 
     public PodcastDetailFragment() {
         // Required empty public constructor
@@ -59,7 +69,7 @@ public class PodcastDetailFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_podcast_list, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_podcast_detail, container, false);
         initViews(rootView);
         return rootView;
     }
@@ -80,9 +90,19 @@ public class PodcastDetailFragment extends Fragment {
         super.onDetach();
         mListener = null;
     }
+
     private void initViews(View rootView) {
         if (rootView == null) return;
         ButterKnife.bind(PodcastDetailFragment.this, rootView);
+
+        Picasso.with(getActivity()).load(podcastItem.getImageUrl()).into(ivCover);
+        tvSubtitle.setText(trim(podcastItem.getSubtitle()));
+    }
+
+    @NonNull
+    private String trim(@Nullable String string) {
+        if (string == null) return "";
+        else return string.trim();
     }
 
     /**

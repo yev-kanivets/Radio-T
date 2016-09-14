@@ -26,7 +26,7 @@ public class PodcastItem implements Parcelable {
     @Nullable
     private final String keywords;
     @Nullable
-    private String thumbnailUrl;
+    private String imageUrl;
 
     public PodcastItem(@Nullable String title, @Nullable String link, @Nullable String pubDate,
                        @Nullable String description, @Nullable String author, @Nullable Content media,
@@ -105,11 +105,11 @@ public class PodcastItem implements Parcelable {
     }
 
     @NonNull
-    public String getThumbnailUrl() {
-        if (thumbnailUrl == null) {
-            thumbnailUrl = getThumbnailUrlFromHtml(description);
+    public String getImageUrl() {
+        if (imageUrl == null) {
+            imageUrl = getThumbnailUrlFromHtml(description);
         }
-        return thumbnailUrl;
+        return imageUrl;
     }
 
     @NonNull

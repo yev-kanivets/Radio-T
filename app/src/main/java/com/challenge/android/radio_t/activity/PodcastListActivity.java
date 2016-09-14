@@ -1,5 +1,6 @@
 package com.challenge.android.radio_t.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentTransaction;
@@ -13,7 +14,7 @@ import com.challenge.android.radio_t.model.PodcastItem;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity implements PodcastListFragment.OnFragmentInteractionListener {
+public class PodcastListActivity extends AppCompatActivity implements PodcastListFragment.OnFragmentInteractionListener {
     public static final String KEY_CHANNEL = "key_channel";
 
     private Channel channel;
@@ -35,7 +36,9 @@ public class MainActivity extends AppCompatActivity implements PodcastListFragme
 
     @Override
     public void onPodcastItemSelected(@NonNull PodcastItem podcastItem) {
-
+        Intent intent = new Intent(PodcastListActivity.this, PodcastDetailActivity.class);
+        intent.putExtra(PodcastDetailActivity.KEY_PODCAST_ITEM, podcastItem);
+        startActivity(intent);
     }
 
     private void initToolbar() {

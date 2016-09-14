@@ -46,8 +46,8 @@ public class SplashActivity extends AppCompatActivity {
 
         if (channel == null) showRssFailedAlert();
         else {
-            Intent intent = new Intent(SplashActivity.this, MainActivity.class);
-            intent.putExtra(MainActivity.KEY_CHANNEL, channel);
+            Intent intent = new Intent(SplashActivity.this, PodcastListActivity.class);
+            intent.putExtra(PodcastListActivity.KEY_CHANNEL, channel);
             startActivity(intent);
             finish();
         }

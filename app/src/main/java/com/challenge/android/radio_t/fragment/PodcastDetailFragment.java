@@ -1,44 +1,35 @@
 package com.challenge.android.radio_t.fragment;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.challenge.android.radio_t.R;
-import com.challenge.android.radio_t.adapter.PodcastItemAdapter;
 import com.challenge.android.radio_t.model.PodcastItem;
 
-import java.util.ArrayList;
-
-import butterknife.Bind;
 import butterknife.ButterKnife;
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link PodcastListFragment.OnFragmentInteractionListener} interface
+ * {@link PodcastDetailFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link PodcastListFragment#newInstance} factory method to
+ * Use the {@link PodcastDetailFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class PodcastListFragment extends Fragment {
-    private static final String ARG_PODCAST_LIST = "arg_podcast_list";
+public class PodcastDetailFragment extends Fragment {
+    private static final String ARG_PODCAST_ITEM = "arg_podcast_item";
 
-    private ArrayList<PodcastItem> podcastList;
+    private PodcastItem podcastItem;
 
-    private OnFragmentInteractionListener listener;
+    private OnFragmentInteractionListener mListener;
 
-    @Bind(R.id.recycler_view)
-    RecyclerView recyclerView;
-
-    public PodcastListFragment() {
+    public PodcastDetailFragment() {
         // Required empty public constructor
     }
 
@@ -46,13 +37,13 @@ public class PodcastListFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param podcastList list of podcasts to show.
-     * @return A new instance of fragment PodcastListFragment.
+     * @param podcastItem podcast to display.
+     * @return A new instance of fragment PodcastDetailFragment.
      */
-    public static PodcastListFragment newInstance(@NonNull ArrayList<PodcastItem> podcastList) {
-        PodcastListFragment fragment = new PodcastListFragment();
+    public static PodcastDetailFragment newInstance(@NonNull PodcastItem podcastItem) {
+        PodcastDetailFragment fragment = new PodcastDetailFragment();
         Bundle args = new Bundle();
-        args.putParcelableArrayList(ARG_PODCAST_LIST, podcastList);
+        args.putParcelable(ARG_PODCAST_ITEM, podcastItem);
         fragment.setArguments(args);
         return fragment;
     }
@@ -61,7 +52,7 @@ public class PodcastListFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            podcastList = getArguments().getParcelableArrayList(ARG_PODCAST_LIST);
+            podcastItem = getArguments().getParcelable(ARG_PODCAST_ITEM);
         }
     }
 
@@ -77,7 +68,7 @@ public class PodcastListFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         if (context instanceof OnFragmentInteractionListener) {
-            listener = (OnFragmentInteractionListener) context;
+            mListener = (OnFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
@@ -87,23 +78,11 @@ public class PodcastListFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        listener = null;
+        mListener = null;
     }
-
     private void initViews(View rootView) {
         if (rootView == null) return;
-        ButterKnife.bind(PodcastListFragment.this, rootView);
-
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
-        recyclerView.setLayoutManager(mLayoutManager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(new PodcastItemAdapter(podcastList,
-                new PodcastItemAdapter.OnPodcastItemClickListener() {
-                    @Override
-                    public void onPodcastItemClicked(@NonNull PodcastItem podcastItem) {
-                        if (listener != null) listener.onPodcastItemSelected(podcastItem);
-                    }
-                }));
+        ButterKnife.bind(PodcastDetailFragment.this, rootView);
     }
 
     /**
@@ -111,12 +90,12 @@ public class PodcastListFragment extends Fragment {
      * fragment to allow an interaction in this fragment to be communicated
      * to the activity and potentially other fragments contained in that
      * activity.
-     * <p/>
+     * <p>
      * See the Android Training lesson <a href=
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        void onPodcastItemSelected(@NonNull PodcastItem podcastItem);
+        void onPlayClicked(Uri uri);
     }
 }

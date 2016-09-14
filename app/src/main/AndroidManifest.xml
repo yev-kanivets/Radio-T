@@ -20,15 +20,18 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".activity.PodcastListActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".activity.PodcastDetailActivity"
+            android:label="@string/title_activity_podcast_detail"
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <service
             android:name=".service.PodcastService"
             android:exported="false" />
-
-        <activity
-            android:name=".activity.MainActivity"
-            android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

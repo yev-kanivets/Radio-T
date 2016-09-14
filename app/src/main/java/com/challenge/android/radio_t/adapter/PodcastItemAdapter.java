@@ -21,9 +21,11 @@ import butterknife.ButterKnife;
 public class PodcastItemAdapter extends RecyclerView.Adapter<PodcastItemAdapter.ViewHolder> {
 
     private List<PodcastItem> podcastList;
+    private OnPodcastItemClickListener listener;
 
-    public PodcastItemAdapter(List<PodcastItem> podcastList) {
+    public PodcastItemAdapter(List<PodcastItem> podcastList, OnPodcastItemClickListener listener) {
         this.podcastList = podcastList;
+        this.listener = listener;
     }
 
     @Override
@@ -35,12 +37,19 @@ public class PodcastItemAdapter extends RecyclerView.Adapter<PodcastItemAdapter.
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        PodcastItem podcastItem = podcastList.get(position);
+        final PodcastItem podcastItem = podcastList.get(position);
         Picasso.with(holder.itemView.getContext())
                 .load(podcastItem.getThumbnailUrl())
                 .into(holder.ivThumbnail);
         holder.tvTitle.setText(trim(podcastItem.getTitle()));
         holder.tvSubtitle.setText(trim(podcastItem.getSubtitle()));
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (listener != null) listener.onPodcastItemClicked(podcastItem);
+            }
+        });
     }
 
     @Override
@@ -66,5 +75,9 @@ public class PodcastItemAdapter extends RecyclerView.Adapter<PodcastItemAdapter.
             super(view);
             ButterKnife.bind(ViewHolder.this, view);
         }
+    }
+
+    public interface OnPodcastItemClickListener {
+        void onPodcastItemClicked(@NonNull PodcastItem podcastItem);
     }
 }

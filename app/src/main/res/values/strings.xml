@@ -3,4 +3,5 @@
     <string name="error">Error</string>
     <string name="failed_load_rss">Failed to load RSS feed</string>
     <string name="title_activity_main">MainActivity</string>
+    <string name="logotype">logotype</string>
 </resources>

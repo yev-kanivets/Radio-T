@@ -2,16 +2,18 @@ package com.challenge.android.radio_t.activity;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 
 import com.challenge.android.radio_t.R;
+import com.challenge.android.radio_t.fragment.PodcastListFragment;
 import com.challenge.android.radio_t.model.Channel;
+import com.challenge.android.radio_t.model.PodcastItem;
 
-public class MainActivity extends AppCompatActivity {
+import java.util.ArrayList;
+
+public class MainActivity extends AppCompatActivity implements PodcastListFragment.OnFragmentInteractionListener {
     public static final String KEY_CHANNEL = "key_channel";
 
     private Channel channel;
@@ -21,23 +23,34 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Channel channel = getIntent().getParcelableExtra(KEY_CHANNEL);
+        channel = getIntent().getParcelableExtra(KEY_CHANNEL);
         if (channel == null) {
             finish();
             return;
         }
 
+        initToolbar();
+        showPodcastListFragment();
+    }
+
+    @Override
+    public void onPodcastItemSelected(@NonNull PodcastItem podcastItem) {
+
+    }
+
+    private void initToolbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(channel.getTitle());
+        }
     }
 
+    private void showPodcastListFragment() {
+        ArrayList<PodcastItem> podcastList = (ArrayList<PodcastItem>) channel.getPodcastItemList();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.container, PodcastListFragment.newInstance(podcastList));
+        transaction.commit();
+    }
 }

@@ -18,6 +18,7 @@ import com.squareup.picasso.Picasso;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -32,7 +33,7 @@ public class PodcastDetailFragment extends Fragment {
 
     private PodcastItem podcastItem;
 
-    private OnFragmentInteractionListener mListener;
+    private OnFragmentInteractionListener listener;
 
     @Bind(R.id.iv_cover)
     public ImageView ivCover;
@@ -78,7 +79,7 @@ public class PodcastDetailFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
+            listener = (OnFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
@@ -88,7 +89,17 @@ public class PodcastDetailFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
+        listener = null;
+    }
+
+    @OnClick(R.id.iv_prev)
+    public void prevClicked() {
+        if (listener != null) listener.onPrevClicked();
+    }
+
+    @OnClick(R.id.iv_next)
+    public void nextClicked() {
+        if (listener != null) listener.onNextClicked();
     }
 
     private void initViews(View rootView) {
@@ -116,6 +127,8 @@ public class PodcastDetailFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        void onPlayClicked(Uri uri);
+        void onPlayClicked();
+        void onPrevClicked();
+        void onNextClicked();
     }
 }

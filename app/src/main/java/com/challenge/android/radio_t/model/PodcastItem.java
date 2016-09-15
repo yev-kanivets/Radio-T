@@ -137,4 +137,13 @@ public class PodcastItem implements Parcelable {
         dest.writeString(subtitle);
         dest.writeString(keywords);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof PodcastItem) {
+            PodcastItem podcastItem = (PodcastItem) o;
+            if (getLink() == null) return false;
+            else return getLink().equals(podcastItem.getLink());
+        } else return false;
+    }
 }

@@ -11,6 +11,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.AppCompatSeekBar;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -144,8 +145,14 @@ public class PodcastDetailFragment extends Fragment {
         if (rootView == null) return;
         ButterKnife.bind(PodcastDetailFragment.this, rootView);
 
+        seekBar.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return true;
+            }
+        });
         Picasso.with(getActivity()).load(podcastItem.getImageUrl()).into(ivCover);
-        tvSubtitle.setText(trim(podcastItem.getSubtitle()));
+        tvSubtitle.setText(podcastItem.getSubtitle());
     }
 
     private void updateWithTrackState(@NonNull TrackState trackState) {
@@ -160,12 +167,6 @@ public class PodcastDetailFragment extends Fragment {
         seekBar.setProgress(trackState.getPosition());
         tvPosition.setText(trackState.getPrettyPosition());
         tvDuration.setText(trackState.getPrettyDuration());
-    }
-
-    @NonNull
-    private String trim(@Nullable String string) {
-        if (string == null) return "";
-        else return string.trim();
     }
 
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {

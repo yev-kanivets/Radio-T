@@ -96,7 +96,7 @@ public class PodcastItem implements Parcelable {
 
     @Nullable
     public String getSubtitle() {
-        return subtitle;
+        return trim(subtitle);
     }
 
     @Nullable
@@ -145,5 +145,11 @@ public class PodcastItem implements Parcelable {
             if (getLink() == null) return false;
             else return getLink().equals(podcastItem.getLink());
         } else return false;
+    }
+
+    @NonNull
+    private String trim(@Nullable String string) {
+        if (string == null) return "";
+        else return string.trim();
     }
 }

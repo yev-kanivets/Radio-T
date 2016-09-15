@@ -41,8 +41,8 @@ public class PodcastItemAdapter extends RecyclerView.Adapter<PodcastItemAdapter.
         Picasso.with(holder.itemView.getContext())
                 .load(podcastItem.getImageUrl())
                 .into(holder.ivThumbnail);
-        holder.tvTitle.setText(trim(podcastItem.getTitle()));
-        holder.tvSubtitle.setText(trim(podcastItem.getSubtitle()));
+        holder.tvTitle.setText(podcastItem.getTitle());
+        holder.tvSubtitle.setText(podcastItem.getSubtitle());
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -55,12 +55,6 @@ public class PodcastItemAdapter extends RecyclerView.Adapter<PodcastItemAdapter.
     @Override
     public int getItemCount() {
         return podcastList.size();
-    }
-
-    @NonNull
-    private String trim(@Nullable String string) {
-        if (string == null) return "";
-        else return string.trim();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

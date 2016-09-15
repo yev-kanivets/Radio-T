@@ -12,4 +12,5 @@
     <string name="previous_track">previous track</string>
     <string name="play_pause">play/pause</string>
     <string name="next_track">next track</string>
+    <string name="time_placeholder">--:--</string>
 </resources>

@@ -10,6 +10,8 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.KeyEvent;
+import android.view.MenuItem;
 
 import com.challenge.android.radio_t.R;
 import com.challenge.android.radio_t.fragment.PodcastDetailFragment;
@@ -53,8 +55,31 @@ public class PodcastDetailActivity extends AppCompatActivity implements PodcastD
     }
 
     @Override
-    public void onPlayClicked() {
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
 
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void onPlayClicked() {
+        Log.d(TAG, "onPlayClicked() called");
+        Intent intent = new Intent(PodcastDetailActivity.this, PodcastService.class);
+        intent.setAction(PodcastService.ACTION_PLAY);
+        startService(intent);
+    }
+
+    @Override
+    public void onPauseClicked() {
+        Log.d(TAG, "onPauseClicked() called");
+        Intent intent = new Intent(PodcastDetailActivity.this, PodcastService.class);
+        intent.setAction(PodcastService.ACTION_PAUSE);
+        startService(intent);
     }
 
     @Override
@@ -79,6 +104,7 @@ public class PodcastDetailActivity extends AppCompatActivity implements PodcastD
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle(podcastItem.getTitle());
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
     }
 
@@ -97,6 +123,9 @@ public class PodcastDetailActivity extends AppCompatActivity implements PodcastD
                     if (item != null) {
                         podcastItem = item;
                         getIntent().putExtra(KEY_PODCAST_ITEM, podcastItem);
+                        if (getSupportActionBar() != null) {
+                            getSupportActionBar().setTitle(podcastItem.getTitle());
+                        }
                         showPodcastDetailFragment();
                     }
                     break;

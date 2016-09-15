@@ -39,6 +39,7 @@
             android:layout_weight="1" />
 
         <android.support.v7.widget.AppCompatSeekBar
+            android:id="@+id/seek_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
@@ -51,10 +52,11 @@
             android:orientation="horizontal">
 
             <TextView
+                android:id="@+id/tv_position"
                 style="@style/TextAppearance.AppCompat.Caption"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="00:00" />
+                android:text="@string/time_placeholder" />
 
             <Space
                 android:layout_width="0dp"
@@ -62,10 +64,11 @@
                 android:layout_weight="1" />
 
             <TextView
+                android:id="@+id/tv_duration"
                 style="@style/TextAppearance.AppCompat.Caption"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="03:34" />
+                android:text="@string/time_placeholder" />
         </LinearLayout>
 
         <LinearLayout

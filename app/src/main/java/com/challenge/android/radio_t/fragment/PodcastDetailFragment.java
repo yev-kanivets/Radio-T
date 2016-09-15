@@ -1,11 +1,15 @@
 package com.challenge.android.radio_t.fragment;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.AppCompatSeekBar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +18,8 @@ import android.widget.TextView;
 
 import com.challenge.android.radio_t.R;
 import com.challenge.android.radio_t.model.PodcastItem;
+import com.challenge.android.radio_t.player.TrackState;
+import com.challenge.android.radio_t.service.PodcastService;
 import com.squareup.picasso.Picasso;
 
 import butterknife.Bind;
@@ -32,6 +38,7 @@ public class PodcastDetailFragment extends Fragment {
     private static final String ARG_PODCAST_ITEM = "arg_podcast_item";
 
     private PodcastItem podcastItem;
+    private boolean playing;
 
     private OnFragmentInteractionListener listener;
 
@@ -39,6 +46,14 @@ public class PodcastDetailFragment extends Fragment {
     public ImageView ivCover;
     @Bind(R.id.tv_subtitle)
     public TextView tvSubtitle;
+    @Bind(R.id.seek_bar)
+    public AppCompatSeekBar seekBar;
+    @Bind(R.id.tv_position)
+    public TextView tvPosition;
+    @Bind(R.id.tv_duration)
+    public TextView tvDuration;
+    @Bind(R.id.iv_play_pause)
+    public ImageView ivPlayPause;
 
     public PodcastDetailFragment() {
         // Required empty public constructor
@@ -87,9 +102,32 @@ public class PodcastDetailFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(PodcastService.BROADCAST_TRACK_STATE_CHANGED);
+        getActivity().registerReceiver(broadcastReceiver, intentFilter);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        getActivity().unregisterReceiver(broadcastReceiver);
+    }
+
+    @Override
     public void onDetach() {
         super.onDetach();
         listener = null;
+    }
+
+    @OnClick(R.id.iv_play_pause)
+    public void playPause() {
+        if (listener != null) {
+            ivPlayPause.setEnabled(false);
+            if (playing) listener.onPauseClicked();
+            else listener.onPlayClicked();
+        }
     }
 
     @OnClick(R.id.iv_prev)
@@ -110,25 +148,58 @@ public class PodcastDetailFragment extends Fragment {
         tvSubtitle.setText(trim(podcastItem.getSubtitle()));
     }
 
+    private void updateWithTrackState(@NonNull TrackState trackState) {
+        if (playing != trackState.isPlaying()) {
+            playing = trackState.isPlaying();
+            if (playing) ivPlayPause.setImageResource(R.drawable.ic_pause);
+            else ivPlayPause.setImageResource(R.drawable.ic_play);
+            ivPlayPause.setEnabled(true);
+        }
+
+        seekBar.setMax(trackState.getDuration());
+        seekBar.setProgress(trackState.getPosition());
+        tvPosition.setText(trackState.getPrettyPosition());
+        tvDuration.setText(trackState.getPrettyDuration());
+    }
+
     @NonNull
     private String trim(@Nullable String string) {
         if (string == null) return "";
         else return string.trim();
     }
 
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            switch (intent.getAction()) {
+                case PodcastService.BROADCAST_TRACK_STATE_CHANGED:
+                    TrackState trackState = intent.getParcelableExtra(PodcastService.EXTRA_TRACK_STATE);
+                    if (trackState != null) updateWithTrackState(trackState);
+                    break;
+
+                default:
+                    break;
+            }
+        }
+    };
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
      * to the activity and potentially other fragments contained in that
      * activity.
-     * <p>
+     * <p/>
      * See the Android Training lesson <a href=
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
         void onPlayClicked();
+
+        void onPauseClicked();
+
         void onPrevClicked();
+
         void onNextClicked();
     }
 }

@@ -2,7 +2,6 @@ package com.challenge.android.radio_t.service;
 
 import android.app.Service;
 import android.content.Intent;
-import android.media.MediaPlayer;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -11,11 +10,7 @@ import android.util.Log;
 import com.challenge.android.radio_t.model.Channel;
 import com.challenge.android.radio_t.model.PodcastItem;
 import com.challenge.android.radio_t.network.RssFeedDataProvider;
-import com.challenge.android.radio_t.player.AudioPlayer;
-import com.challenge.android.radio_t.player.TrackState;
-
-import java.util.Timer;
-import java.util.TimerTask;
+import com.challenge.android.radio_t.player.PodcastChannelPlayer;
 
 public class PodcastService extends Service {
     public static final String ACTION_FETCH_RSS_FEED = "action_fetch_rss_feed";
@@ -24,6 +19,7 @@ public class PodcastService extends Service {
     public static final String ACTION_NEXT_PODCAST_ITEM = "action_next_podcast_item";
     public static final String ACTION_PLAY = "action_play";
     public static final String ACTION_PAUSE = "action_pause";
+    public static final String ACTION_SET_POSITION = "action_set_position";
 
     public static final String BROADCAST_RSS_CHANNEL_FETCHED = "broadcast_rss_channel_fetched";
     public static final String BROADCAST_PODCAST_ITEM_SET = "broadcast_podcast_item_set";
@@ -32,24 +28,20 @@ public class PodcastService extends Service {
     public static final String EXTRA_CHANNEL = "extra_channel";
     public static final String EXTRA_PODCAST_ITEM = "extra_podcast_item";
     public static final String EXTRA_TRACK_STATE = "extra_track_state";
+    public static final String EXTRA_TRACK_POSITION = "extra_track_position";
 
     private static final String TAG = "PodcastService";
 
-    @Nullable
-    private Channel channel;
-    @Nullable
-    private PodcastItem currentPodcastItem;
-
     private RssFeedDataProvider feedDataProvider;
-    private AudioPlayer audioPlayer;
-    private Timer timer;
+    private PodcastChannelPlayer player;
 
     @Override
     public void onCreate() {
-        Log.d(TAG, "onCreate() called");
         super.onCreate();
+        Log.d(TAG, "onCreate() called");
+
         feedDataProvider = new RssFeedDataProvider();
-        audioPlayer = new AudioPlayer();
+        player = new PodcastChannelPlayer(PodcastService.this);
     }
 
     @Override
@@ -64,23 +56,28 @@ public class PodcastService extends Service {
 
                 case ACTION_SET_CURRENT_PODCAST_ITEM:
                     PodcastItem item = intent.getParcelableExtra(EXTRA_PODCAST_ITEM);
-                    if (item != null) setCurrentPodcastItem(item);
+                    if (item != null) player.setCurrentPodcastItem(item);
                     break;
 
                 case ACTION_PREV_PODCAST_ITEM:
-                    prevPodcastItem();
+                    player.prevPodcastItem();
                     break;
 
                 case ACTION_NEXT_PODCAST_ITEM:
-                    nextPodcastItem();
+                    player.nextPodcastItem();
                     break;
 
                 case ACTION_PLAY:
-                    play();
+                    player.play();
                     break;
 
                 case ACTION_PAUSE:
-                    pause();
+                    player.pause();
+                    break;
+
+                case ACTION_SET_POSITION:
+                    int position = intent.getIntExtra(EXTRA_TRACK_POSITION, -1);
+                    if (position != -1) player.setPosition(position);
                     break;
 
                 default:
@@ -93,8 +90,8 @@ public class PodcastService extends Service {
 
     @Override
     public void onDestroy() {
-        Log.d(TAG, "onDestroy() called");
         super.onDestroy();
+        Log.d(TAG, "onDestroy() called");
     }
 
     @Nullable
@@ -103,122 +100,11 @@ public class PodcastService extends Service {
         return null;
     }
 
-    private void setCurrentPodcastItem(@NonNull PodcastItem currentPodcastItem) {
-        Log.d(TAG, "setCurrentPodcastItem() called with: currentPodcastItem = [" + currentPodcastItem + "]");
-        this.currentPodcastItem = currentPodcastItem;
-        stop();
-
-        Intent intent = new Intent(BROADCAST_PODCAST_ITEM_SET);
-        intent.putExtra(EXTRA_PODCAST_ITEM, currentPodcastItem);
-        sendBroadcast(intent);
-    }
-
-    private void prevPodcastItem() {
-        Log.d(TAG, "prevPodcastItem() called " + channel + " " + currentPodcastItem);
-        if (channel == null || currentPodcastItem == null) return;
-
-        int currentIndex = getPodcastItemIndex(currentPodcastItem);
-        if (currentIndex == -1) return;
-
-        int listSize = channel.getPodcastItemList().size();
-        setCurrentPodcastItem(channel.getPodcastItemList().get((listSize + currentIndex + 1) % listSize));
-        stop();
-    }
-
-    private void nextPodcastItem() {
-        Log.d(TAG, "nextPodcastItem() called " + channel + " " + currentPodcastItem);
-        if (channel == null || currentPodcastItem == null) return;
-
-        int currentIndex = getPodcastItemIndex(currentPodcastItem);
-        if (currentIndex == -1) return;
-
-        int listSize = channel.getPodcastItemList().size();
-        setCurrentPodcastItem(channel.getPodcastItemList().get((currentIndex - 1) % listSize));
-        stop();
-    }
-
-    private int getPodcastItemIndex(@NonNull PodcastItem podcastItem) {
-        if (channel == null) return -1;
-
-        int index = -1;
-        for (int i = 0; i < channel.getPodcastItemList().size(); i++) {
-            if (podcastItem.equals(channel.getPodcastItemList().get(i))) index = i;
-        }
-
-        return index;
-    }
-
-    private void play() {
-        Log.d(TAG, "play() called");
-        if (currentPodcastItem == null || currentPodcastItem.getMedia() == null) return;
-        final String url = currentPodcastItem.getMedia().getUrl();
-
-        if (audioPlayer.isPrepared()) {
-            audioPlayer.playStream(url);
-            trackStateUpdated();
-            startTimer();
-        } else {
-            try {
-                audioPlayer.prepareStream(url, new MediaPlayer.OnPreparedListener() {
-                    @Override
-                    public void onPrepared(MediaPlayer mp) {
-                        audioPlayer.playStream(url);
-                        trackStateUpdated();
-                        startTimer();
-                    }
-                });
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private void pause() {
-        Log.d(TAG, "pause() called");
-        if (currentPodcastItem == null) return;
-        if (audioPlayer.isPlaying()) audioPlayer.pause();
-        trackStateUpdated();
-        stopTimer();
-    }
-
-    private void stop() {
-        Log.d(TAG, "stop() called");
-        if (currentPodcastItem == null) return;
-        pause();
-        audioPlayer.destroy();
-    }
-
-    private void trackStateUpdated() {
-        Log.d(TAG, "trackStateUpdated() called " + audioPlayer.isPlaying());
-        Intent intent = new Intent(BROADCAST_TRACK_STATE_CHANGED);
-        intent.putExtra(EXTRA_TRACK_STATE, new TrackState(audioPlayer.getCurrentPosition(),
-                audioPlayer.getDuration(), audioPlayer.isPlaying()));
-        sendBroadcast(intent);
-    }
-
-    private void startTimer() {
-        stopTimer();
-        timer = new Timer();
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                trackStateUpdated();
-            }
-        }, 1000, 1000);
-    }
-
-    private void stopTimer() {
-        if (timer != null) {
-            timer.cancel();
-            timer = null;
-        }
-    }
-
     private RssFeedDataProvider.OnRssFeedDataListener feedDataListener = new RssFeedDataProvider.OnRssFeedDataListener() {
         @Override
         public void onDataFetched(@NonNull Channel channel) {
             Log.d(TAG, "onDataFetched() called with: channel = [" + channel + "]");
-            PodcastService.this.channel = channel;
+            player.setChannel(channel);
 
             Intent intent = new Intent(BROADCAST_RSS_CHANNEL_FETCHED);
             intent.putExtra(EXTRA_CHANNEL, channel);

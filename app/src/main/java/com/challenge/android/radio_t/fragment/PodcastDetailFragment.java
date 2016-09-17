@@ -15,6 +15,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.challenge.android.radio_t.R;
@@ -40,6 +41,7 @@ public class PodcastDetailFragment extends Fragment {
 
     private PodcastItem podcastItem;
     private boolean playing;
+    private boolean seeking;
 
     private OnFragmentInteractionListener listener;
 
@@ -145,14 +147,25 @@ public class PodcastDetailFragment extends Fragment {
         if (rootView == null) return;
         ButterKnife.bind(PodcastDetailFragment.this, rootView);
 
-        seekBar.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                return true;
-            }
-        });
+        seekBar.setEnabled(false);
         Picasso.with(getActivity()).load(podcastItem.getImageUrl()).into(ivCover);
         tvSubtitle.setText(podcastItem.getSubtitle());
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (fromUser && listener != null) listener.onSeek(progress);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                seeking = true;
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                seeking = false;
+            }
+        });
     }
 
     private void updateWithTrackState(@NonNull TrackState trackState) {
@@ -163,8 +176,9 @@ public class PodcastDetailFragment extends Fragment {
             ivPlayPause.setEnabled(true);
         }
 
+        seekBar.setEnabled(true);
         seekBar.setMax(trackState.getDuration());
-        seekBar.setProgress(trackState.getPosition());
+        if (!seeking) seekBar.setProgress(trackState.getPosition());
         tvPosition.setText(trackState.getPrettyPosition());
         tvDuration.setText(trackState.getPrettyDuration());
     }
@@ -175,7 +189,8 @@ public class PodcastDetailFragment extends Fragment {
             switch (intent.getAction()) {
                 case PodcastService.BROADCAST_TRACK_STATE_CHANGED:
                     TrackState trackState = intent.getParcelableExtra(PodcastService.EXTRA_TRACK_STATE);
-                    if (trackState != null) updateWithTrackState(trackState);
+                    if (trackState != null && podcastItem.equals(trackState.getPodcastItem()))
+                        updateWithTrackState(trackState);
                     break;
 
                 default:
@@ -202,5 +217,7 @@ public class PodcastDetailFragment extends Fragment {
         void onPrevClicked();
 
         void onNextClicked();
+
+        void onSeek(int progress);
     }
 }

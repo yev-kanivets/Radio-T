@@ -98,6 +98,15 @@ public class PodcastDetailActivity extends AppCompatActivity implements PodcastD
         startService(intent);
     }
 
+    @Override
+    public void onSeek(int progress) {
+        Log.d(TAG, "onSeek() called with: progress = [" + progress + "]");
+        Intent intent = new Intent(PodcastDetailActivity.this, PodcastService.class);
+        intent.setAction(PodcastService.ACTION_SET_POSITION);
+        intent.putExtra(PodcastService.EXTRA_TRACK_POSITION, progress);
+        startService(intent);
+    }
+
     private void initToolbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

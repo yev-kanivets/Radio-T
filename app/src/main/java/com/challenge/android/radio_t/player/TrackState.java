@@ -4,21 +4,34 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
+import com.challenge.android.radio_t.model.PodcastItem;
+
 public class TrackState implements Parcelable {
     private final int position;
     private final int duration;
     private final boolean playing;
+    private final PodcastItem podcastItem;
 
-    public TrackState(int position, int duration, boolean playing) {
+    public TrackState(int position, int duration, boolean playing, PodcastItem podcastItem) {
         this.position = position;
         this.duration = duration;
         this.playing = playing;
+        this.podcastItem = podcastItem;
     }
 
     protected TrackState(Parcel in) {
         position = in.readInt();
         duration = in.readInt();
         playing = in.readByte() != 0;
+        podcastItem = in.readParcelable(PodcastItem.class.getClassLoader());
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(position);
+        dest.writeInt(duration);
+        dest.writeByte((byte) (playing ? 1 : 0));
+        dest.writeParcelable(podcastItem, flags);
     }
 
     public static final Creator<TrackState> CREATOR = new Creator<TrackState>() {
@@ -45,6 +58,10 @@ public class TrackState implements Parcelable {
         return playing;
     }
 
+    public PodcastItem getPodcastItem() {
+        return podcastItem;
+    }
+
     public String getPrettyPosition() {
         return getPrettyTime(position);
     }
@@ -56,13 +73,6 @@ public class TrackState implements Parcelable {
     @Override
     public int describeContents() {
         return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(position);
-        dest.writeInt(duration);
-        dest.writeByte((byte) (playing ? 1 : 0));
     }
 
     @NonNull

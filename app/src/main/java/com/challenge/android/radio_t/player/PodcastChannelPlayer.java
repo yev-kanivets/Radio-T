@@ -9,6 +9,7 @@ import android.util.Log;
 
 import com.challenge.android.radio_t.model.Channel;
 import com.challenge.android.radio_t.model.PodcastItem;
+import com.challenge.android.radio_t.notification.PodcastNotificationManager;
 import com.challenge.android.radio_t.service.PodcastService;
 
 import java.util.Timer;
@@ -22,6 +23,7 @@ public class PodcastChannelPlayer {
     @Nullable
     private PodcastItem currentPodcastItem;
 
+    private PodcastNotificationManager notificationManager;
     private AudioPlayer audioPlayer;
     private Timer timer;
     @Nullable
@@ -30,6 +32,7 @@ public class PodcastChannelPlayer {
     public PodcastChannelPlayer(@Nullable Context context) {
         this.context = context;
         audioPlayer = new AudioPlayer();
+        notificationManager = new PodcastNotificationManager(context);
     }
 
     public void setChannel(@Nullable Channel channel) {
@@ -114,6 +117,7 @@ public class PodcastChannelPlayer {
         if (currentPodcastItem == null) return;
         pause();
         audioPlayer.destroy();
+        notificationManager.hideNotification();
     }
 
     private int getPodcastItemIndex(@NonNull PodcastItem podcastItem) {
@@ -129,10 +133,14 @@ public class PodcastChannelPlayer {
 
     private void trackStateUpdated() {
         Log.d(TAG, "trackStateUpdated() called " + audioPlayer.isPlaying());
+        TrackState trackState = new TrackState(audioPlayer.getCurrentPosition(),
+                audioPlayer.getDuration(), audioPlayer.isPlaying(), currentPodcastItem);
+
         Intent intent = new Intent(PodcastService.BROADCAST_TRACK_STATE_CHANGED);
-        intent.putExtra(PodcastService.EXTRA_TRACK_STATE, new TrackState(audioPlayer.getCurrentPosition(),
-                audioPlayer.getDuration(), audioPlayer.isPlaying(), currentPodcastItem));
+        intent.putExtra(PodcastService.EXTRA_TRACK_STATE, trackState);
         sendBroadcast(intent);
+
+        notificationManager.showNotification(trackState);
     }
 
     private void startTimer() {

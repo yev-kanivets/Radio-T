@@ -7,4 +7,7 @@
 
     <dimen name="thumbnail_size">48dp</dimen>
     <dimen name="player_button_height">48dp</dimen>
+    <dimen name="notification_button_height">24dp</dimen>
+    <dimen name="notification_height">64dp</dimen>
+    <dimen name="notification_height_big">128dp</dimen>
 </resources>

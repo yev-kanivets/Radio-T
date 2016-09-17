@@ -21,10 +21,6 @@ public class SplashActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-
-        Intent intent = new Intent(SplashActivity.this, PodcastService.class);
-        intent.setAction(PodcastService.ACTION_FETCH_RSS_FEED);
-        startService(intent);
     }
 
     @Override
@@ -33,6 +29,10 @@ public class SplashActivity extends AppCompatActivity {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(PodcastService.BROADCAST_RSS_CHANNEL_FETCHED);
         registerReceiver(broadcastReceiver, intentFilter);
+
+        Intent intent = new Intent(SplashActivity.this, PodcastService.class);
+        intent.setAction(PodcastService.ACTION_FETCH_RSS_FEED);
+        startService(intent);
     }
 
     @Override

@@ -21,8 +21,7 @@
             android:id="@+id/tv_position"
             style="@style/TextAppearance.AppCompat.Caption"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/time_placeholder" />
+            android:layout_height="wrap_content" />
 
         <Space
             android:layout_width="0dp"
@@ -33,8 +32,7 @@
             android:id="@+id/tv_duration"
             style="@style/TextAppearance.AppCompat.Caption"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/time_placeholder" />
+            android:layout_height="wrap_content" />
     </LinearLayout>
 
     <LinearLayout
@@ -50,7 +48,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:contentDescription="@string/previous_track"
+            android:contentDescription="@string/cd_previous_track"
             android:src="@drawable/ic_prev" />
 
         <ImageView
@@ -58,7 +56,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:contentDescription="@string/play_pause"
+            android:contentDescription="@string/cd_play_pause"
             android:src="@drawable/ic_play" />
 
         <ImageView
@@ -66,7 +64,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:contentDescription="@string/next_track"
+            android:contentDescription="@string/cd_next_track"
             android:src="@drawable/ic_next" />
 
     </LinearLayout>

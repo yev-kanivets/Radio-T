@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Радіо-Т</string>
+    <string name="error">Помилка</string>
+    <string name="failed_load_rss">Не вдалося завантажити RSS новини</string>
+    <string name="download">Завантажити</string>
+    <string name="podcast_is_cached">Підкаст закешовано</string>
+
+    <string name="cd_logotype">логотип</string>
+    <string name="cd_thumbnail">іконка</string>
+    <string name="cd_cover">обкладинка</string>
+    <string name="cd_previous_track">попередній трек</string>
+    <string name="cd_play_pause">грати/запинити</string>
+    <string name="cd_next_track">наступний трек</string>
+</resources>

@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:contentDescription="@string/cover"
+        android:contentDescription="@string/cd_cover"
         android:paddingLeft="@dimen/normal_margin"
         android:paddingRight="@dimen/normal_margin"
         android:paddingTop="@dimen/normal_margin"

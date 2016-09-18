@@ -13,7 +13,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/radio"
-        android:contentDescription="@string/logotype"
+        android:contentDescription="@string/cd_logotype"
         android:layout_centerInParent="true"/>
 
 </RelativeLayout>

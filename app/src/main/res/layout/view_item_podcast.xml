@@ -15,7 +15,7 @@
         android:layout_height="@dimen/thumbnail_size"
         android:layout_marginEnd="@dimen/normal_margin"
         android:layout_marginRight="@dimen/normal_margin"
-        android:contentDescription="@string/thumbnail" />
+        android:contentDescription="@string/cd_thumbnail" />
 
     <LinearLayout
         android:layout_width="match_parent"

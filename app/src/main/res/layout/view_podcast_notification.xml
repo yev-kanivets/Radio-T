@@ -10,7 +10,7 @@
         android:layout_width="@dimen/notification_height"
         android:layout_height="@dimen/notification_height"
         android:background="@color/bg_white"
-        android:contentDescription="@string/cover"
+        android:contentDescription="@string/cd_cover"
         android:padding="@dimen/half_margin"
         android:scaleType="centerCrop" />
 
@@ -54,7 +54,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:contentDescription="@string/previous_track"
+            android:contentDescription="@string/cd_previous_track"
             android:paddingLeft="@dimen/normal_margin"
             android:paddingRight="@dimen/normal_margin"
             android:src="@drawable/ic_prev" />
@@ -64,7 +64,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:contentDescription="@string/play_pause"
+            android:contentDescription="@string/cd_play_pause"
             android:paddingLeft="@dimen/normal_margin"
             android:paddingRight="@dimen/normal_margin"
             android:src="@drawable/ic_play" />
@@ -74,7 +74,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:contentDescription="@string/next_track"
+            android:contentDescription="@string/cd_next_track"
             android:paddingLeft="@dimen/normal_margin"
             android:paddingRight="@dimen/normal_margin"
             android:src="@drawable/ic_next" />

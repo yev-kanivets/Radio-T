@@ -9,7 +9,7 @@
         android:layout_width="@dimen/notification_height_big"
         android:layout_height="@dimen/notification_height_big"
         android:background="@color/bg_white"
-        android:contentDescription="@string/cover"
+        android:contentDescription="@string/cd_cover"
         android:padding="@dimen/half_margin"
         android:scaleType="centerCrop" />
 
@@ -76,7 +76,6 @@
                 style="@style/TextAppearance.AppCompat.Caption"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/time_placeholder"
                 android:textColor="@color/colorSecondaryText"
                 android:textSize="@dimen/small_text_size" />
 
@@ -91,7 +90,6 @@
                 style="@style/TextAppearance.AppCompat.Caption"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/time_placeholder"
                 android:textColor="@color/colorSecondaryText"
                 android:textSize="@dimen/small_text_size" />
         </LinearLayout>
@@ -109,7 +107,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:contentDescription="@string/previous_track"
+                android:contentDescription="@string/cd_previous_track"
                 android:src="@drawable/ic_prev" />
 
             <ImageView
@@ -117,7 +115,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:contentDescription="@string/play_pause"
+                android:contentDescription="@string/cd_play_pause"
                 android:src="@drawable/ic_play" />
 
             <ImageView
@@ -125,7 +123,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:contentDescription="@string/next_track"
+                android:contentDescription="@string/cd_next_track"
                 android:src="@drawable/ic_next" />
 
         </LinearLayout>

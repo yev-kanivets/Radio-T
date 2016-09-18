@@ -13,4 +13,6 @@
     <string name="play_pause">play/pause</string>
     <string name="next_track">next track</string>
     <string name="time_placeholder">--:--</string>
+    <string name="download">Download</string>
+    <string name="podcast_is_cached">Podcast is cached</string>
 </resources>

@@ -81,8 +81,7 @@ public class PodcastListActivity extends AppCompatActivity implements PodcastLis
     }
 
     private void showPodcastDetailActivity(@NonNull TrackState trackState) {
-        if (waitingForBroadcast && (currentPodcastItem == null
-                || !currentPodcastItem.equals(trackState.getPodcastItem()))) {
+        if (waitingForBroadcast) {
             waitingForBroadcast = false;
             currentPodcastItem = trackState.getPodcastItem();
             Intent intent = new Intent(PodcastListActivity.this, PodcastDetailActivity.class);

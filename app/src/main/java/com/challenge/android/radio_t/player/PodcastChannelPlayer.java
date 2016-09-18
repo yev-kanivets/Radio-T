@@ -77,7 +77,8 @@ public class PodcastChannelPlayer {
     public void play() {
         Log.d(TAG, "play() called");
         if (currentPodcastItem == null || currentPodcastItem.getMedia() == null) return;
-        final String url = currentPodcastItem.getMedia().getUrl();
+        PodcastUriPathProvider pathProvider = new PodcastUriPathProvider(context);
+        final String url = pathProvider.getUri(currentPodcastItem);
 
         if (audioPlayer.isPrepared()) {
             audioPlayer.playStream(url);

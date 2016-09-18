@@ -9,7 +9,7 @@ import android.util.Log;
 
 import com.challenge.android.radio_t.model.Channel;
 import com.challenge.android.radio_t.model.PodcastItem;
-import com.challenge.android.radio_t.network.RssFeedDataProvider;
+import com.challenge.android.radio_t.network.rss.RssFeedDataProvider;
 import com.challenge.android.radio_t.player.PodcastChannelPlayer;
 
 public class PodcastService extends Service {

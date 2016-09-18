@@ -1,4 +1,4 @@
-package com.challenge.android.radio_t.network;
+package com.challenge.android.radio_t.network.rss;
 
 import android.content.Context;
 import android.support.annotation.NonNull;

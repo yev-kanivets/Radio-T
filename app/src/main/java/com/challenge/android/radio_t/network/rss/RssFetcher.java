@@ -1,4 +1,4 @@
-package com.challenge.android.radio_t.network;
+package com.challenge.android.radio_t.network.rss;
 
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;

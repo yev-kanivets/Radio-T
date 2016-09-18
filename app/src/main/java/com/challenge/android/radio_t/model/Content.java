@@ -49,6 +49,14 @@ public class Content implements Parcelable {
         return type;
     }
 
+    @Nullable
+    public String getFileName() {
+        if (url == null) return null;
+        String[] words = url.split("/");
+        if (words.length == 0) return null;
+        return words[words.length-1];
+    }
+
     @Override
     public int describeContents() {
         return 0;

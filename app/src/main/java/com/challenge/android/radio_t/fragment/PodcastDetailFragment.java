@@ -1,14 +1,20 @@
 package com.challenge.android.radio_t.fragment;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.AppCompatSeekBar;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -17,8 +23,10 @@ import android.widget.TextView;
 
 import com.challenge.android.radio_t.R;
 import com.challenge.android.radio_t.model.PodcastItem;
+import com.challenge.android.radio_t.network.PodcastDownloader;
 import com.challenge.android.radio_t.player.TrackState;
 import com.challenge.android.radio_t.service.PodcastService;
+import com.challenge.android.radio_t.util.PermissionsChecker;
 import com.squareup.picasso.Picasso;
 
 import butterknife.Bind;
@@ -35,12 +43,15 @@ import butterknife.OnClick;
  */
 public class PodcastDetailFragment extends Fragment {
     private static final String ARG_TRACK_STATE = "arg_track_state";
+    private static final int REQUEST_PERMISSIONS = 509;
 
     private TrackState trackState;
     private boolean playing;
     private boolean seeking;
 
     private OnFragmentInteractionListener listener;
+    private Menu menu;
+    private PodcastDownloader downloader;
 
     @Bind(R.id.iv_cover)
     public ImageView ivCover;
@@ -77,6 +88,7 @@ public class PodcastDetailFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        downloader = new PodcastDownloader(getActivity());
         if (getArguments() != null) {
             trackState = getArguments().getParcelable(ARG_TRACK_STATE);
         }
@@ -87,6 +99,7 @@ public class PodcastDetailFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_podcast_detail, container, false);
         initViews(rootView);
+        setHasOptionsMenu(true);
         updateWithTrackState(trackState);
         return rootView;
     }
@@ -120,6 +133,39 @@ public class PodcastDetailFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         listener = null;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_podcast_details, menu);
+        this.menu = menu;
+        if (downloader.isFileExist(trackState.getPodcastItem())) {
+            menu.getItem(0).setVisible(false);
+            menu.getItem(1).setVisible(true);
+        } else {
+            menu.getItem(0).setVisible(true);
+            menu.getItem(1).setVisible(false);
+        }
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_download:
+                if (checkWesPermission()) downloadPodcast();
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (grantResults[0] == PackageManager.PERMISSION_GRANTED) downloadPodcast();
     }
 
     @OnClick(R.id.iv_play_pause)
@@ -165,6 +211,30 @@ public class PodcastDetailFragment extends Fragment {
                 seeking = false;
             }
         });
+    }
+
+    private boolean checkWesPermission() {
+        PermissionsChecker permissionsChecker = new PermissionsChecker(getActivity());
+        if (permissionsChecker.lacksPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.READ_EXTERNAL_STORAGE)) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_PERMISSIONS);
+            } else {
+                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        REQUEST_PERMISSIONS);
+            }
+            return false;
+        } else return true;
+    }
+
+    private void downloadPodcast() {
+        downloader = new PodcastDownloader(getActivity());
+        if (!downloader.isFileExist(trackState.getPodcastItem())) {
+            downloader.download(trackState.getPodcastItem());
+            menu.getItem(0).setVisible(false);
+            menu.getItem(1).setVisible(true);
+        }
     }
 
     private void updateWithTrackState(@NonNull TrackState trackState) {

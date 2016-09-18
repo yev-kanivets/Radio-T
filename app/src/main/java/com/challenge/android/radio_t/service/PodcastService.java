@@ -41,6 +41,8 @@ public class PodcastService extends Service {
 
         feedDataProvider = new RssFeedDataProvider(PodcastService.this);
         player = new PodcastChannelPlayer(PodcastService.this);
+
+        feedDataProvider.fetchRssFeedData(feedDataListener);
     }
 
     @Override

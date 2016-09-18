@@ -37,6 +37,9 @@ public class PodcastChannelPlayer {
 
     public void setChannel(@Nullable Channel channel) {
         this.channel = channel;
+        if (channel != null && channel.getPodcastItemList().size() > 0) {
+            currentPodcastItem = channel.getPodcastItemList().get(0);
+        }
     }
 
     public void setCurrentPodcastItem(@NonNull PodcastItem currentPodcastItem) {

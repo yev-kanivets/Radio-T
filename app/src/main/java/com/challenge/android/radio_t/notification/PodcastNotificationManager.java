@@ -14,6 +14,7 @@ import android.support.v4.util.LruCache;
 import android.widget.RemoteViews;
 
 import com.challenge.android.radio_t.R;
+import com.challenge.android.radio_t.activity.PodcastDetailActivity;
 import com.challenge.android.radio_t.model.PodcastItem;
 import com.challenge.android.radio_t.player.TrackState;
 import com.challenge.android.radio_t.service.PodcastService;
@@ -44,6 +45,11 @@ public class PodcastNotificationManager {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             notificationBuilder.setVisibility(Notification.VISIBILITY_PUBLIC);
         }
+
+        Intent intentOpenPlayer = new Intent(context, PodcastDetailActivity.class);
+        intentOpenPlayer.putExtra(PodcastDetailActivity.KEY_TRACK_STATE, trackState);
+        PendingIntent pendingIntentOpenPlayer = PendingIntent.getActivity(context, 0, intentOpenPlayer, 0);
+        notificationBuilder.setContentIntent(pendingIntentOpenPlayer);
 
         Notification notification = notificationBuilder.getNotification();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {

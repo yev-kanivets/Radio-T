@@ -57,9 +57,10 @@ public class PodcastChannelPlayer {
         int currentIndex = getPodcastItemIndex(currentPodcastItem);
         if (currentIndex == -1) return;
 
+        stop();
+
         int listSize = channel.getPodcastItemList().size();
         setCurrentPodcastItem(channel.getPodcastItemList().get((currentIndex + 1) % listSize));
-        stop();
     }
 
     public void nextPodcastItem() {
@@ -69,9 +70,10 @@ public class PodcastChannelPlayer {
         int currentIndex = getPodcastItemIndex(currentPodcastItem);
         if (currentIndex == -1) return;
 
+        stop();
+
         int listSize = channel.getPodcastItemList().size();
         setCurrentPodcastItem(channel.getPodcastItemList().get((listSize + currentIndex - 1) % listSize));
-        stop();
     }
 
     public void play() {

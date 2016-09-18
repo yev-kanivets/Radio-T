@@ -2,7 +2,9 @@ package com.challenge.android.radio_t.notification;
 
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -12,9 +14,9 @@ import android.support.v4.util.LruCache;
 import android.widget.RemoteViews;
 
 import com.challenge.android.radio_t.R;
-import com.challenge.android.radio_t.model.Content;
 import com.challenge.android.radio_t.model.PodcastItem;
 import com.challenge.android.radio_t.player.TrackState;
+import com.challenge.android.radio_t.service.PodcastService;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
@@ -39,6 +41,9 @@ public class PodcastNotificationManager {
         Notification.Builder notificationBuilder = new Notification.Builder(context);
         notificationBuilder.setContent(getContent(trackState));
         notificationBuilder.setSmallIcon(R.drawable.radio);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            notificationBuilder.setVisibility(Notification.VISIBILITY_PUBLIC);
+        }
 
         Notification notification = notificationBuilder.getNotification();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
@@ -66,7 +71,11 @@ public class PodcastNotificationManager {
         notificationView.setTextViewText(R.id.tv_title, podcastItem.getTitle());
         notificationView.setTextViewText(R.id.tv_author, podcastItem.getAuthor());
 
-        return notificationView;
+        if (trackState.isPlaying())
+            notificationView.setImageViewResource(R.id.iv_play_pause, R.drawable.ic_pause);
+        else notificationView.setImageViewResource(R.id.iv_play_pause, R.drawable.ic_play);
+
+        return appendActions(trackState, notificationView);
     }
 
     @NonNull
@@ -84,6 +93,33 @@ public class PodcastNotificationManager {
         notificationView.setTextViewText(R.id.tv_duration, trackState.getPrettyDuration());
         notificationView.setProgressBar(R.id.progress_bar, trackState.getDuration(),
                 trackState.getPosition(), false);
+
+        if (trackState.isPlaying())
+            notificationView.setImageViewResource(R.id.iv_play_pause, R.drawable.ic_pause);
+        else notificationView.setImageViewResource(R.id.iv_play_pause, R.drawable.ic_play);
+
+        return appendActions(trackState, notificationView);
+    }
+
+    @NonNull
+    private RemoteViews appendActions(@NonNull TrackState trackState, @NonNull RemoteViews notificationView) {
+        Intent intentPlay = new Intent(PodcastService.ACTION_PLAY);
+        PendingIntent pendingIntentPlay = PendingIntent.getService(context, 0, intentPlay, 0);
+
+        Intent intentPause = new Intent(PodcastService.ACTION_PAUSE);
+        PendingIntent pendingIntentPause = PendingIntent.getService(context, 0, intentPause, 0);
+
+        Intent intentPrev = new Intent(PodcastService.ACTION_PREV_PODCAST_ITEM);
+        PendingIntent pendingIntentPrev = PendingIntent.getService(context, 0, intentPrev, 0);
+
+        Intent intentNext = new Intent(PodcastService.ACTION_NEXT_PODCAST_ITEM);
+        PendingIntent pendingIntentNext = PendingIntent.getService(context, 0, intentNext, 0);
+
+        notificationView.setOnClickPendingIntent(R.id.iv_prev, pendingIntentPrev);
+        notificationView.setOnClickPendingIntent(R.id.iv_next, pendingIntentNext);
+        if (trackState.isPlaying())
+            notificationView.setOnClickPendingIntent(R.id.iv_play_pause, pendingIntentPause);
+        else notificationView.setOnClickPendingIntent(R.id.iv_play_pause, pendingIntentPlay);
 
         return notificationView;
     }

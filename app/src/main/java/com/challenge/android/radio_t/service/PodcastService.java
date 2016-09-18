@@ -22,7 +22,6 @@ public class PodcastService extends Service {
     public static final String ACTION_SET_POSITION = "action_set_position";
 
     public static final String BROADCAST_RSS_CHANNEL_FETCHED = "broadcast_rss_channel_fetched";
-    public static final String BROADCAST_PODCAST_ITEM_SET = "broadcast_podcast_item_set";
     public static final String BROADCAST_TRACK_STATE_CHANGED = "broadcast_track_state_changed";
 
     public static final String EXTRA_CHANNEL = "extra_channel";
@@ -48,7 +47,7 @@ public class PodcastService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "onStartCommand() called with: intent = [" + intent + "], flags = ["
                 + flags + "], startId = [" + startId + "]");
-        if (intent != null) {
+        if (intent != null && intent.getAction() != null) {
             switch (intent.getAction()) {
                 case ACTION_FETCH_RSS_FEED:
                     feedDataProvider.fetchRssFeedData(feedDataListener);
@@ -92,6 +91,7 @@ public class PodcastService extends Service {
     public void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "onDestroy() called");
+        player.destroy();
     }
 
     @Nullable

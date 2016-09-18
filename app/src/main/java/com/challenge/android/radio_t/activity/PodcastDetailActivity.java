@@ -4,18 +4,18 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.MenuItem;
 
 import com.challenge.android.radio_t.R;
 import com.challenge.android.radio_t.fragment.PodcastDetailFragment;
 import com.challenge.android.radio_t.model.PodcastItem;
+import com.challenge.android.radio_t.player.TrackState;
 import com.challenge.android.radio_t.service.PodcastService;
 
 public class PodcastDetailActivity extends AppCompatActivity implements PodcastDetailFragment.OnFragmentInteractionListener {
@@ -44,7 +44,7 @@ public class PodcastDetailActivity extends AppCompatActivity implements PodcastD
     protected void onResume() {
         super.onResume();
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(PodcastService.BROADCAST_PODCAST_ITEM_SET);
+        intentFilter.addAction(PodcastService.BROADCAST_TRACK_STATE_CHANGED);
         registerReceiver(broadcastReceiver, intentFilter);
     }
 
@@ -123,20 +123,25 @@ public class PodcastDetailActivity extends AppCompatActivity implements PodcastD
         transaction.commit();
     }
 
+    private void trackStateChanged(@NonNull TrackState trackState) {
+        PodcastItem item = trackState.getPodcastItem();
+        if (!podcastItem.equals(item)) {
+            podcastItem = item;
+            getIntent().putExtra(KEY_PODCAST_ITEM, podcastItem);
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().setTitle(podcastItem.getTitle());
+            }
+            showPodcastDetailFragment();
+        }
+    }
+
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             switch (intent.getAction()) {
-                case PodcastService.BROADCAST_PODCAST_ITEM_SET:
-                    PodcastItem item = intent.getParcelableExtra(PodcastService.EXTRA_PODCAST_ITEM);
-                    if (item != null) {
-                        podcastItem = item;
-                        getIntent().putExtra(KEY_PODCAST_ITEM, podcastItem);
-                        if (getSupportActionBar() != null) {
-                            getSupportActionBar().setTitle(podcastItem.getTitle());
-                        }
-                        showPodcastDetailFragment();
-                    }
+                case PodcastService.BROADCAST_TRACK_STATE_CHANGED:
+                    TrackState trackState = intent.getParcelableExtra(PodcastService.EXTRA_TRACK_STATE);
+                    if (trackState != null) trackStateChanged(trackState);
                     break;
 
                 default:

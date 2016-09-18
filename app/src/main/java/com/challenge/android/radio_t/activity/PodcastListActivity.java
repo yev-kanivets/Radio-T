@@ -14,6 +14,7 @@ import com.challenge.android.radio_t.R;
 import com.challenge.android.radio_t.fragment.PodcastListFragment;
 import com.challenge.android.radio_t.model.Channel;
 import com.challenge.android.radio_t.model.PodcastItem;
+import com.challenge.android.radio_t.player.TrackState;
 import com.challenge.android.radio_t.service.PodcastService;
 
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ public class PodcastListActivity extends AppCompatActivity implements PodcastLis
     public static final String KEY_CHANNEL = "key_channel";
 
     private Channel channel;
+    private PodcastItem currentPodcastItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +44,7 @@ public class PodcastListActivity extends AppCompatActivity implements PodcastLis
     protected void onResume() {
         super.onResume();
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(PodcastService.BROADCAST_PODCAST_ITEM_SET);
+        intentFilter.addAction(PodcastService.BROADCAST_TRACK_STATE_CHANGED);
         registerReceiver(broadcastReceiver, intentFilter);
     }
 
@@ -76,19 +78,22 @@ public class PodcastListActivity extends AppCompatActivity implements PodcastLis
         transaction.commit();
     }
 
-    private void showPodcastDetailActivity(@NonNull PodcastItem podcastItem) {
-        Intent intent = new Intent(PodcastListActivity.this, PodcastDetailActivity.class);
-        intent.putExtra(PodcastDetailActivity.KEY_PODCAST_ITEM, podcastItem);
-        startActivity(intent);
+    private void showPodcastDetailActivity(@NonNull TrackState trackState) {
+        if (currentPodcastItem == null || !currentPodcastItem.equals(trackState.getPodcastItem())) {
+            currentPodcastItem = trackState.getPodcastItem();
+            Intent intent = new Intent(PodcastListActivity.this, PodcastDetailActivity.class);
+            intent.putExtra(PodcastDetailActivity.KEY_PODCAST_ITEM, currentPodcastItem);
+            startActivity(intent);
+        }
     }
 
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             switch (intent.getAction()) {
-                case PodcastService.BROADCAST_PODCAST_ITEM_SET:
-                    PodcastItem item = intent.getParcelableExtra(PodcastService.EXTRA_PODCAST_ITEM);
-                    if (item != null) showPodcastDetailActivity(item);
+                case PodcastService.BROADCAST_TRACK_STATE_CHANGED:
+                    TrackState trackState = intent.getParcelableExtra(PodcastService.EXTRA_TRACK_STATE);
+                    if (trackState != null) showPodcastDetailActivity(trackState);
                     break;
 
                 default:

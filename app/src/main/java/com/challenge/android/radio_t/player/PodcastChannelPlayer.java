@@ -44,9 +44,7 @@ public class PodcastChannelPlayer {
         this.currentPodcastItem = currentPodcastItem;
         stop();
 
-        Intent intent = new Intent(PodcastService.BROADCAST_PODCAST_ITEM_SET);
-        intent.putExtra(PodcastService.EXTRA_PODCAST_ITEM, currentPodcastItem);
-        sendBroadcast(intent);
+        trackStateUpdated();
     }
 
     public void prevPodcastItem() {
@@ -112,12 +110,15 @@ public class PodcastChannelPlayer {
         if (audioPlayer.isPrepared()) audioPlayer.setPosition(position);
     }
 
+    public void destroy() {
+        notificationManager.hideNotification();
+    }
+
     private void stop() {
         Log.d(TAG, "stop() called");
         if (currentPodcastItem == null) return;
         pause();
         audioPlayer.destroy();
-        notificationManager.hideNotification();
     }
 
     private int getPodcastItemIndex(@NonNull PodcastItem podcastItem) {

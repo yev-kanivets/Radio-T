@@ -31,7 +31,16 @@
 
         <service
             android:name=".service.PodcastService"
-            android:exported="false" />
+            android:exported="false">
+            <intent-filter>
+                <action android:name="action_play" />
+                <action android:name="action_pause" />
+                <action android:name="action_prev_podcast_item" />
+                <action android:name="action_next_podcast_item" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

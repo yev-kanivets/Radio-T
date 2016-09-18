@@ -24,6 +24,7 @@ public class PodcastListActivity extends AppCompatActivity implements PodcastLis
 
     private Channel channel;
     private PodcastItem currentPodcastItem;
+    private boolean waitingForBroadcast;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +57,7 @@ public class PodcastListActivity extends AppCompatActivity implements PodcastLis
 
     @Override
     public void onPodcastItemSelected(@NonNull PodcastItem podcastItem) {
+        waitingForBroadcast = true;
         Intent intent = new Intent(PodcastListActivity.this, PodcastService.class);
         intent.setAction(PodcastService.ACTION_SET_CURRENT_PODCAST_ITEM);
         intent.putExtra(PodcastService.EXTRA_PODCAST_ITEM, podcastItem);
@@ -79,10 +81,13 @@ public class PodcastListActivity extends AppCompatActivity implements PodcastLis
     }
 
     private void showPodcastDetailActivity(@NonNull TrackState trackState) {
-        if (currentPodcastItem == null || !currentPodcastItem.equals(trackState.getPodcastItem())) {
+        if (waitingForBroadcast && (currentPodcastItem == null
+                || !currentPodcastItem.equals(trackState.getPodcastItem()))) {
+            waitingForBroadcast = false;
             currentPodcastItem = trackState.getPodcastItem();
             Intent intent = new Intent(PodcastListActivity.this, PodcastDetailActivity.class);
-            intent.putExtra(PodcastDetailActivity.KEY_PODCAST_ITEM, currentPodcastItem);
+            intent.putExtra(PodcastDetailActivity.KEY_TRACK_STATE,
+                    new TrackState(0, 0, false, currentPodcastItem));
             startActivity(intent);
         }
     }

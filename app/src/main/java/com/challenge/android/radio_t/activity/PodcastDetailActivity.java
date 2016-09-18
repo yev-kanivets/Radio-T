@@ -21,17 +21,17 @@ import com.challenge.android.radio_t.service.PodcastService;
 public class PodcastDetailActivity extends AppCompatActivity implements PodcastDetailFragment.OnFragmentInteractionListener {
     private static final String TAG = "PodcastDetailActivity";
 
-    public static final String KEY_PODCAST_ITEM = "key_podcast_item";
+    public static final String KEY_TRACK_STATE = "key_track_state";
 
-    private PodcastItem podcastItem;
+    private TrackState trackState;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_podcast_detail);
 
-        podcastItem = getIntent().getParcelableExtra(KEY_PODCAST_ITEM);
-        if (podcastItem == null) {
+        trackState = getIntent().getParcelableExtra(KEY_TRACK_STATE);
+        if (trackState == null) {
             finish();
             return;
         }
@@ -112,24 +112,25 @@ public class PodcastDetailActivity extends AppCompatActivity implements PodcastD
         setSupportActionBar(toolbar);
 
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle(podcastItem.getTitle());
+            getSupportActionBar().setTitle(trackState.getPodcastItem().getTitle());
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
     }
 
     private void showPodcastDetailFragment() {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.container, PodcastDetailFragment.newInstance(podcastItem));
+        transaction.replace(R.id.container, PodcastDetailFragment.newInstance(trackState));
         transaction.commit();
     }
 
     private void trackStateChanged(@NonNull TrackState trackState) {
-        PodcastItem item = trackState.getPodcastItem();
-        if (!podcastItem.equals(item)) {
-            podcastItem = item;
-            getIntent().putExtra(KEY_PODCAST_ITEM, podcastItem);
+        PodcastItem oldPodcastItem = this.trackState.getPodcastItem();
+        this.trackState = trackState;
+        getIntent().putExtra(KEY_TRACK_STATE, trackState);
+
+        if (!oldPodcastItem.equals(trackState.getPodcastItem())) {
             if (getSupportActionBar() != null) {
-                getSupportActionBar().setTitle(podcastItem.getTitle());
+                getSupportActionBar().setTitle(trackState.getPodcastItem().getTitle());
             }
             showPodcastDetailFragment();
         }

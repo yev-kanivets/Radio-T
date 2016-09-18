@@ -4,14 +4,11 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.AppCompatSeekBar;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -37,9 +34,9 @@ import butterknife.OnClick;
  * create an instance of this fragment.
  */
 public class PodcastDetailFragment extends Fragment {
-    private static final String ARG_PODCAST_ITEM = "arg_podcast_item";
+    private static final String ARG_TRACK_STATE = "arg_track_state";
 
-    private PodcastItem podcastItem;
+    private TrackState trackState;
     private boolean playing;
     private boolean seeking;
 
@@ -66,13 +63,13 @@ public class PodcastDetailFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param podcastItem podcast to display.
+     * @param trackState track state with podcast to display.
      * @return A new instance of fragment PodcastDetailFragment.
      */
-    public static PodcastDetailFragment newInstance(@NonNull PodcastItem podcastItem) {
+    public static PodcastDetailFragment newInstance(@NonNull TrackState trackState) {
         PodcastDetailFragment fragment = new PodcastDetailFragment();
         Bundle args = new Bundle();
-        args.putParcelable(ARG_PODCAST_ITEM, podcastItem);
+        args.putParcelable(ARG_TRACK_STATE, trackState);
         fragment.setArguments(args);
         return fragment;
     }
@@ -81,7 +78,7 @@ public class PodcastDetailFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            podcastItem = getArguments().getParcelable(ARG_PODCAST_ITEM);
+            trackState = getArguments().getParcelable(ARG_TRACK_STATE);
         }
     }
 
@@ -90,6 +87,7 @@ public class PodcastDetailFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_podcast_detail, container, false);
         initViews(rootView);
+        updateWithTrackState(trackState);
         return rootView;
     }
 
@@ -147,6 +145,7 @@ public class PodcastDetailFragment extends Fragment {
         if (rootView == null) return;
         ButterKnife.bind(PodcastDetailFragment.this, rootView);
 
+        PodcastItem podcastItem = trackState.getPodcastItem();
         seekBar.setEnabled(false);
         Picasso.with(getActivity()).load(podcastItem.getImageUrl()).into(ivCover);
         tvSubtitle.setText(podcastItem.getSubtitle());
@@ -188,6 +187,7 @@ public class PodcastDetailFragment extends Fragment {
         public void onReceive(Context context, Intent intent) {
             switch (intent.getAction()) {
                 case PodcastService.BROADCAST_TRACK_STATE_CHANGED:
+                    PodcastItem podcastItem = trackState.getPodcastItem();
                     TrackState trackState = intent.getParcelableExtra(PodcastService.EXTRA_TRACK_STATE);
                     if (trackState != null && podcastItem.equals(trackState.getPodcastItem()))
                         updateWithTrackState(trackState);

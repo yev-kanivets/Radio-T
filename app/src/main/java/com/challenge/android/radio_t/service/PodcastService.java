@@ -39,7 +39,7 @@ public class PodcastService extends Service {
         super.onCreate();
         Log.d(TAG, "onCreate() called");
 
-        feedDataProvider = new RssFeedDataProvider();
+        feedDataProvider = new RssFeedDataProvider(PodcastService.this);
         player = new PodcastChannelPlayer(PodcastService.this);
     }
 

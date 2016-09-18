@@ -67,7 +67,10 @@ public class PodcastNotificationManager {
 
         if (isImageLoaded(podcastItem.getImageUrl())) notificationView.setImageViewBitmap(
                 R.id.iv_cover, getImageFromMedia(podcastItem.getImageUrl()));
-        else loadImageFromMedia(podcastItem.getImageUrl());
+        else {
+            loadImageFromMedia(podcastItem.getImageUrl());
+            notificationView.setImageViewBitmap(R.id.iv_cover, null);
+        }
         notificationView.setTextViewText(R.id.tv_title, podcastItem.getTitle());
         notificationView.setTextViewText(R.id.tv_author, podcastItem.getAuthor());
 
@@ -86,7 +89,10 @@ public class PodcastNotificationManager {
 
         if (isImageLoaded(podcastItem.getImageUrl())) notificationView.setImageViewBitmap(
                 R.id.iv_cover, getImageFromMedia(podcastItem.getImageUrl()));
-        else loadImageFromMedia(podcastItem.getImageUrl());
+        else {
+            loadImageFromMedia(podcastItem.getImageUrl());
+            notificationView.setImageViewBitmap(R.id.iv_cover, null);
+        }
         notificationView.setTextViewText(R.id.tv_title, podcastItem.getTitle());
         notificationView.setTextViewText(R.id.tv_author, podcastItem.getAuthor());
         notificationView.setTextViewText(R.id.tv_position, trackState.getPrettyPosition());

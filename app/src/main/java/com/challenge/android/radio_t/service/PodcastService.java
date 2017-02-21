@@ -21,8 +21,8 @@ public class PodcastService extends Service {
     public static final String ACTION_PAUSE = "action_pause";
     public static final String ACTION_SET_POSITION = "action_set_position";
 
-    public static final String BROADCAST_RSS_CHANNEL_FETCHED = "broadcast_rss_channel_fetched";
-    public static final String BROADCAST_TRACK_STATE_CHANGED = "broadcast_track_state_changed";
+    public static final String BROADCAST_RSS_CHANNEL_FETCHED = "com.challenge.android.radio_t.broadcast_rss_channel_fetched";
+    public static final String BROADCAST_TRACK_STATE_CHANGED = "com.challenge.android.radio_t.broadcast_track_state_changed";
 
     public static final String EXTRA_CHANNEL = "extra_channel";
     public static final String EXTRA_PODCAST_ITEM = "extra_podcast_item";
